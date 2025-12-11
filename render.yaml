@@ -1,0 +1,44 @@
+services:
+  # MongoDB Database
+  - type: mongodb
+    name: ctf-mongodb
+    plan: free
+    databaseName: ctf
+
+  # Backend API
+  - type: web
+    name: ctf-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        fromDatabase:
+          name: ctf-mongodb
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+        # Update this after frontend is deployed
+        value: https://your-frontend.onrender.com
+
+  # Frontend
+  - type: web
+    name: ctf-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+        # Update this with your backend URL after deployment
+        value: https://ctf-backend.onrender.com
+

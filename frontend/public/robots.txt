@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /super-secret-folder
+Disallow: /admin
+Disallow: /api
+
+# FLAG{dont_list_secrets}
+

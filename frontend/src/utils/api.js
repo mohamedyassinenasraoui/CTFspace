@@ -3,21 +3,21 @@ import axios from 'axios';
 // Auto-detect API URL based on current hostname
 // This allows the app to work when accessed from other devices on the network
 export const getApiUrl = () => {
-  // If VITE_API_URL is set, use it
+  // If VITE_API_URL is set (production), use it
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
   
-  // Get current hostname and protocol
+  // Development fallback: Get current hostname and protocol
   const hostname = window.location.hostname;
   const protocol = window.location.protocol;
   
-  // If accessing via localhost, use localhost for API
+  // Development: If accessing via localhost, use localhost for API
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'http://localhost:5000';
   }
   
-  // If accessing via network IP, use the same IP for API
+  // Development: If accessing via network IP, use the same IP for API
   return `${protocol}//${hostname}:5000`;
 };
 

@@ -64,9 +64,19 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Database connection with improved options
-// Database connection with improved options
 const connectDB = async () => {
-  let MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ctf';
+  // In production, MONGODB_URI must be set
+  let MONGODB_URI = process.env.MONGODB_URI;
+  
+  // Development fallback only
+  if (!MONGODB_URI && process.env.NODE_ENV !== 'production') {
+    MONGODB_URI = 'mongodb://localhost:27017/ctf';
+  }
+  
+  if (!MONGODB_URI) {
+    console.error('❌ MONGODB_URI environment variable is required in production!');
+    process.exit(1);
+  }
 
   try {
     // Try connecting to the provided URI first
@@ -191,9 +201,10 @@ httpServer.listen(PORT, HOST, () => {
   if (process.env.NODE_ENV === 'production') {
     console.log(`\n🚀 Server running on port ${PORT}`);
     console.log(`   Environment: ${process.env.NODE_ENV}`);
-    console.log(`   Frontend URL: ${process.env.FRONTEND_URL || 'NOT CONFIGURED'}`);
+    console.log(`   Frontend URL: ${process.env.FRONTEND_URL || 'NOT CONFIGURED ⚠️'}`);
   } else {
-    console.log(`\n🚀 Server running on http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
+    const serverUrl = HOST === '0.0.0.0' ? 'localhost' : HOST;
+    console.log(`\n🚀 Server running on http://${serverUrl}:${PORT}`);
     console.log('Server is accessible on your local network!');
 
     // Display network IP addresses (development only)

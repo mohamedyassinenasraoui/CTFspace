@@ -25,39 +25,29 @@ dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
-// Allow CORS from localhost and local network IPs
+// Allow CORS from configured frontend URL only (production)
 const allowedOrigins = process.env.FRONTEND_URL
-  ? [process.env.FRONTEND_URL]
-  : ['http://localhost:5173'];
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : [];
 
-// Add dynamic origin checking for local network
+// Support multiple frontend URLs (comma-separated)
+// Only allow production URLs, no localhost or local network IPs
+
+// CORS configuration for production
 const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
 
-    // Allow localhost and local network IPs
-    if (allowedOrigins.includes(origin) ||
-      origin.startsWith('http://192.168.') ||
-      origin.startsWith('http://10.') ||
-      origin.startsWith('http://172.16.') ||
-      origin.startsWith('http://172.17.') ||
-      origin.startsWith('http://172.18.') ||
-      origin.startsWith('http://172.19.') ||
-      origin.startsWith('http://172.20.') ||
-      origin.startsWith('http://172.21.') ||
-      origin.startsWith('http://172.22.') ||
-      origin.startsWith('http://172.23.') ||
-      origin.startsWith('http://172.24.') ||
-      origin.startsWith('http://172.25.') ||
-      origin.startsWith('http://172.26.') ||
-      origin.startsWith('http://172.27.') ||
-      origin.startsWith('http://172.28.') ||
-      origin.startsWith('http://172.29.') ||
-      origin.startsWith('http://172.30.') ||
-      origin.startsWith('http://172.31.')) {
+    // Normalize origin (remove trailing slash)
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    const normalizedAllowed = allowedOrigins.map(url => url.replace(/\/$/, ''));
+
+    // Only allow exact match from FRONTEND_URL environment variable
+    if (normalizedAllowed.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked origin: ${origin}. Allowed: ${allowedOrigins.join(', ') || 'None configured'}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -140,7 +130,26 @@ app.use('/api/hidden-flags', hiddenFlagsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({ 
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'CTF Platform API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      challenges: '/api/challenges',
+      teams: '/api/teams'
+    }
+  });
 });
 
 // Initialize Socket.IO
@@ -166,6 +175,17 @@ mongoose.connection.once('open', async () => {
 
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0'; // Listen on all network interfaces
+
+// Log environment info for debugging
+if (process.env.NODE_ENV === 'production') {
+  console.log('\n📋 Environment Configuration:');
+  console.log(`   NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`   PORT: ${PORT}`);
+  console.log(`   MONGODB_URI: ${process.env.MONGODB_URI ? 'Set' : 'NOT SET ⚠️'}`);
+  console.log(`   FRONTEND_URL: ${process.env.FRONTEND_URL || 'NOT SET ⚠️'}`);
+  console.log(`   JWT_SECRET: ${process.env.JWT_SECRET ? 'Set' : 'NOT SET ⚠️'}`);
+  console.log(`   JWT_REFRESH_SECRET: ${process.env.JWT_REFRESH_SECRET ? 'Set' : 'NOT SET ⚠️'}`);
+}
 
 httpServer.listen(PORT, HOST, () => {
   console.log(`\n🚀 Server running on http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);

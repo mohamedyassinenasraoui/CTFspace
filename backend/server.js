@@ -188,27 +188,33 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 httpServer.listen(PORT, HOST, () => {
-  console.log(`\n🚀 Server running on http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
-  console.log('Server is accessible on your local network!');
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`\n🚀 Server running on port ${PORT}`);
+    console.log(`   Environment: ${process.env.NODE_ENV}`);
+    console.log(`   Frontend URL: ${process.env.FRONTEND_URL || 'NOT CONFIGURED'}`);
+  } else {
+    console.log(`\n🚀 Server running on http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
+    console.log('Server is accessible on your local network!');
 
-  // Display network IP addresses
-  if (HOST === '0.0.0.0') {
-    const networkInterfaces = os.networkInterfaces();
-    console.log('\n📡 Network Access Information:');
-    let found = false;
-    Object.keys(networkInterfaces).forEach((interfaceName) => {
-      networkInterfaces[interfaceName].forEach((iface) => {
-        if (iface.family === 'IPv4' && !iface.internal) {
-          found = true;
-          console.log(`   Interface: ${interfaceName}`);
-          console.log(`   Backend:  http://${iface.address}:${PORT}`);
-          console.log(`   Frontend: http://${iface.address}:5173`);
-          console.log('');
-        }
+    // Display network IP addresses (development only)
+    if (HOST === '0.0.0.0') {
+      const networkInterfaces = os.networkInterfaces();
+      console.log('\n📡 Network Access Information:');
+      let found = false;
+      Object.keys(networkInterfaces).forEach((interfaceName) => {
+        networkInterfaces[interfaceName].forEach((iface) => {
+          if (iface.family === 'IPv4' && !iface.internal) {
+            found = true;
+            console.log(`   Interface: ${interfaceName}`);
+            console.log(`   Backend:  http://${iface.address}:${PORT}`);
+            console.log(`   Frontend: http://${iface.address}:5173`);
+            console.log('');
+          }
+        });
       });
-    });
-    if (found) {
-      console.log('💡 Share these URLs with others on your WiFi network!\n');
+      if (found) {
+        console.log('💡 Share these URLs with others on your WiFi network!\n');
+      }
     }
   }
 });

@@ -1,0 +1,51 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark blue circular background -->
+  <circle cx="100" cy="100" r="100" fill="#1a1f3a"/>
+  
+  <!-- Shield shape with metallic appearance -->
+  <defs>
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#c0c0c0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#888888;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#666666;stop-opacity:1" />
+    </linearGradient>
+    <pattern id="binary" x="0" y="0" width="15" height="15" patternUnits="userSpaceOnUse">
+      <text x="1" y="7" font-family="monospace" font-size="6" fill="#555" opacity="0.4">0</text>
+      <text x="8" y="7" font-family="monospace" font-size="6" fill="#555" opacity="0.4">1</text>
+      <text x="1" y="14" font-family="monospace" font-size="6" fill="#555" opacity="0.4">1</text>
+      <text x="8" y="14" font-family="monospace" font-size="6" fill="#555" opacity="0.4">0</text>
+    </pattern>
+  </defs>
+  
+  <!-- Shield with green outline -->
+  <path d="M 100 35 L 65 43 L 45 70 L 45 105 L 65 135 L 100 150 L 135 135 L 155 105 L 155 70 L 135 43 Z" 
+        fill="url(#shieldGradient)" stroke="#28a745" stroke-width="4"/>
+  
+  <!-- Binary code overlay on shield -->
+  <path d="M 100 35 L 65 43 L 45 70 L 45 105 L 65 135 L 100 150 L 135 135 L 155 105 L 155 70 L 135 43 Z" 
+        fill="url(#binary)" opacity="0.3"/>
+  
+  <!-- Flag pole (silver-grey) -->
+  <line x1="70" y1="75" x2="70" y2="125" stroke="#c0c0c0" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Green flag waving -->
+  <path d="M 70 75 Q 85 80 100 78 Q 115 76 100 85 Q 85 90 70 85 Z" fill="#28a745" stroke="#1e7e34" stroke-width="1"/>
+  
+  <!-- Padlock on flag (bright green) -->
+  <g transform="translate(80, 78)">
+    <!-- Lock body -->
+    <rect x="0" y="4" width="10" height="10" rx="2" fill="#28a745" stroke="#fff" stroke-width="1.5"/>
+    <!-- Lock shackle -->
+    <path d="M 5 0 Q 5 2 3 4 L 3 6 Q 5 8 7 6 L 7 4 Q 5 2 5 0" 
+          fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Keyhole -->
+    <circle cx="5" cy="9" r="1.5" fill="#fff"/>
+    <rect x="4.5" y="7" width="1" height="3" fill="#fff"/>
+  </g>
+  
+  <!-- Main title -->
+  <text x="100" y="170" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="1px">CTF PLATFORM</text>
+  
+  <!-- Subtitle -->
+  <text x="100" y="185" font-family="Arial, sans-serif" font-size="9" fill="#888888" text-anchor="middle" letter-spacing="0.5px">CAPTURE THE FLAG - CYBER CHALLENGES</text>
+</svg>

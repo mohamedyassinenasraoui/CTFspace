@@ -13,15 +13,10 @@ import ChallengeDetail from './pages/ChallengeDetail';
 import Leaderboard from './pages/Leaderboard';
 import AdminPanel from './pages/AdminPanel';
 import Tutorials from './pages/Tutorials';
-import Navbar from './components/Navbar';
-import { HiddenElementFlag, Base64Flag, initializeHiddenFlags } from './components/HiddenFlags';
+import Team from './pages/Team';
+import Sidebar from './components/Navbar';
 import { WebSocketFlag } from './components/WebSocketFlag';
 import './App.css';
-
-// Initialize hidden flags
-if (typeof window !== 'undefined') {
-  initializeHiddenFlags();
-}
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -88,6 +83,14 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/team"
+        element={
+          <PrivateRoute>
+            <Team />
+          </PrivateRoute>
+        }
+      />
+      <Route
         path="/admin"
         element={
           <AdminRoute>
@@ -110,10 +113,8 @@ function App() {
           }}
         >
           <div className="app">
-            <Navbar />
-            <main className="main-content">
-              <HiddenElementFlag />
-              <Base64Flag />
+            <Sidebar />
+            <main className="main-content sidebar-main">
               <WebSocketFlag />
               <AppRoutes />
             </main>

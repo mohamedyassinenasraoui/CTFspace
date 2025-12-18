@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_URL, apiClient, setAuthToken } from '../utils/api.js';
 
 const AuthContext = createContext();
 
@@ -13,10 +12,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
 
-  // Update axios default headers when token changes
-  useEffect(() => {
-    setAuthToken(accessToken);
-  }, [accessToken]);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     if (accessToken) {
@@ -27,13 +23,13 @@ export function AuthProvider({ children }) {
   }, [accessToken]);
 
   const fetchUser = async () => {
-    if (!accessToken) {
-      setLoading(false);
-      return;
-    }
-    
     try {
-      const response = await apiClient.get('/api/auth/me');
+      const response = await axios.get(`${API_URL}/api/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        withCredentials: true
+      });
       setUser(response.data.user);
     } catch (error) {
       console.error('Failed to fetch user:', error);
@@ -47,9 +43,10 @@ export function AuthProvider({ children }) {
 
   const oauthLogin = async (provider, token) => {
     try {
-      const response = await apiClient.post(
-        `/api/oauth/${provider}`,
-        { accessToken: token }
+      const response = await axios.post(
+        `${API_URL}/api/oauth/${provider}`,
+        { accessToken: token },
+        { withCredentials: true }
       );
 
       setAccessToken(response.data.accessToken);
@@ -66,9 +63,11 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const response = await apiClient.post('/api/auth/login', {
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
         email,
         password
+      }, {
+        withCredentials: true
       });
 
       setAccessToken(response.data.accessToken);
@@ -85,10 +84,12 @@ export function AuthProvider({ children }) {
 
   const register = async (username, email, password) => {
     try {
-      const response = await apiClient.post('/api/auth/register', {
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
         username,
         email,
         password
+      }, {
+        withCredentials: true
       });
 
       setAccessToken(response.data.accessToken);
@@ -105,7 +106,9 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await apiClient.post('/api/auth/logout', {});
+      await axios.post(`${API_URL}/api/auth/logout`, {}, {
+        withCredentials: true
+      });
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -117,7 +120,9 @@ export function AuthProvider({ children }) {
 
   const refreshToken = async () => {
     try {
-      const response = await apiClient.post('/api/auth/refresh', {});
+      const response = await axios.post(`${API_URL}/api/auth/refresh`, {}, {
+        withCredentials: true
+      });
       setAccessToken(response.data.accessToken);
       localStorage.setItem('accessToken', response.data.accessToken);
       return response.data.accessToken;
@@ -129,32 +134,24 @@ export function AuthProvider({ children }) {
 
   // Set up axios interceptor for token refresh
   useEffect(() => {
-    const interceptor = apiClient.interceptors.response.use(
+    const interceptor = axios.interceptors.response.use(
       (response) => response,
       async (error) => {
-        const originalRequest = error.config;
-        
-        // If 401 and we haven't already tried to refresh
-        if (error.response?.status === 401 && accessToken && !originalRequest._retry) {
-          originalRequest._retry = true;
-          
+        if (error.response?.status === 401 && accessToken) {
           try {
             const newToken = await refreshToken();
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            return apiClient(originalRequest);
+            error.config.headers.Authorization = `Bearer ${newToken}`;
+            return axios.request(error.config);
           } catch (refreshError) {
-            // Refresh failed, logout user
-            logout();
             return Promise.reject(refreshError);
           }
         }
-        
         return Promise.reject(error);
       }
     );
 
     return () => {
-      apiClient.interceptors.response.eject(interceptor);
+      axios.interceptors.response.eject(interceptor);
     };
   }, [accessToken]);
 

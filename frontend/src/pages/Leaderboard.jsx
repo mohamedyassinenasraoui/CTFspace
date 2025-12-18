@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
-import { apiClient, API_URL } from '../utils/api.js';
+import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import '../App.css';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 function Leaderboard() {
   const { accessToken } = useAuth();
@@ -40,7 +42,9 @@ function Leaderboard() {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await apiClient.get('/api/teams');
+      const response = await axios.get(`${API_URL}/api/teams`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
       const sorted = response.data.teams.sort((a, b) => b.score - a.score);
       setTeams(sorted);
     } catch (error) {

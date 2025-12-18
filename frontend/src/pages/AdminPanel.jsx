@@ -242,14 +242,6 @@ function AdminPanel() {
                   <p>News Articles</p>
                 </div>
               </div>
-              <div className="stat-card">
-                <div className="stat-icon">🔍</div>
-                <div className="stat-info">
-                  <h3>{stats.overview.totalHiddenFlags}</h3>
-                  <p>Hidden Flags</p>
-                  <small>{stats.overview.totalDiscoveries} discovered</small>
-                </div>
-              </div>
             </div>
 
             <div className="dashboard-sections">

@@ -9,9 +9,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1422 100%);
+  background: radial-gradient(circle at center, #4a148c 0%, #1a0033 50%, #0a0015 100%);
   overflow: hidden;
   padding: 4rem 2rem;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .hero-particles {
@@ -41,34 +43,63 @@
   margin: 0 auto;
 }
 
+.hero-logo {
+  margin-bottom: 3rem;
+  animation: floatLogo 3s ease-in-out infinite;
+}
+
+.hero-logo img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 30px rgba(74, 158, 255, 0.4));
+  transition: transform 0.3s ease;
+}
+
+.hero-logo img:hover {
+  transform: scale(1.05);
+}
+
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
 .hero-title {
   font-size: 3.5rem;
   font-weight: 800;
   margin-bottom: 1.5rem;
   line-height: 1.2;
-  color: #ffffff;
-  text-shadow: 0 4px 20px rgba(74, 158, 255, 0.3);
+  text-shadow: 0 4px 20px rgba(74, 158, 255, 0.4);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #4a9eff 0%, #8a2be2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientShift 3s ease infinite;
-  background-size: 200% 200%;
+.hero-text-blue {
+  color: #4a9eff;
+  text-shadow: 0 0 20px rgba(74, 158, 255, 0.5);
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+.hero-text-bright-blue {
+  color: #00bfff;
+  text-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
+}
+
+.hero-text-purple {
+  color: #8a2be2;
+  text-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
 }
 
 .hero-subtitle {
   font-size: 1.25rem;
   color: #b0b0b0;
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
   line-height: 1.6;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-buttons {
@@ -87,6 +118,10 @@
 .blog-section {
   padding: 4rem 2rem;
   background: rgba(15, 20, 34, 0.5);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .section-header {
@@ -259,6 +294,10 @@
 .reviews-section {
   padding: 4rem 2rem;
   background: rgba(26, 31, 58, 0.3);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .rating-summary {
@@ -398,6 +437,10 @@
 .news-preview-section {
   padding: 4rem 2rem;
   background: rgba(15, 20, 34, 0.5);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .news-preview-section .section-header {

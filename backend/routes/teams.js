@@ -10,6 +10,69 @@ const router = express.Router();
 router.use(authMiddleware);
 router.use(apiRateLimit);
 
+// Get all teams (for leaderboard) - must be before /:id route
+router.get('/', async (req, res) => {
+  try {
+    const teams = await Team.find()
+      .populate('members', 'username')
+      .select('name score members createdAt')
+      .sort({ score: -1, createdAt: 1 })
+      .limit(100);
+
+    res.json({ teams });
+  } catch (error) {
+    console.error('Get teams error:', error);
+    res.status(500).json({ error: 'Failed to get teams' });
+  }
+});
+
+// Join team by code - must be before /:id route
+router.post('/join/code', async (req, res) => {
+  try {
+    const { code } = req.body;
+    const userId = req.user._id;
+
+    if (!code || typeof code !== 'string') {
+      return res.status(400).json({ error: 'Join code is required' });
+    }
+
+    // Check if user is already in a team
+    if (req.user.teamId) {
+      return res.status(400).json({ error: 'You are already in a team' });
+    }
+
+    // Find team by join code
+    const team = await Team.findOne({ joinCode: code.toUpperCase().trim() });
+    if (!team) {
+      return res.status(404).json({ error: 'Invalid join code' });
+    }
+
+    // Check if team is full
+    if (team.members.length >= 5) {
+      return res.status(400).json({ error: 'Team is full (max 5 members)' });
+    }
+
+    // Check if user is already a member
+    if (team.members.some(memberId => memberId.toString() === userId.toString())) {
+      return res.status(400).json({ error: 'You are already a member of this team' });
+    }
+
+    // Add user to team
+    team.members.push(userId);
+    await team.save();
+
+    // Update user's teamId
+    await User.findByIdAndUpdate(userId, { teamId: team._id });
+
+    const populatedTeam = await Team.findById(team._id).populate('members', 'username email avatar');
+
+    res.json({ team: populatedTeam });
+  } catch (error) {
+    console.error('Join team by code error:', error);
+    res.status(500).json({ error: 'Failed to join team' });
+  }
+});
+
 // Create team
 router.post('/', async (req, res) => {
   try {
@@ -41,7 +104,7 @@ router.post('/', async (req, res) => {
     // Update user's teamId
     await User.findByIdAndUpdate(userId, { teamId: team._id });
 
-    const populatedTeam = await Team.findById(team._id).populate('members', 'username email');
+    const populatedTeam = await Team.findById(team._id).populate('members', 'username email avatar');
 
     res.status(201).json({ team: populatedTeam });
   } catch (error) {
@@ -50,7 +113,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Join team
+// Join team by ID
 router.post('/:id/join', async (req, res) => {
   try {
     const teamId = req.params.id;
@@ -83,7 +146,7 @@ router.post('/:id/join', async (req, res) => {
     // Update user's teamId
     await User.findByIdAndUpdate(userId, { teamId: team._id });
 
-    const populatedTeam = await Team.findById(team._id).populate('members', 'username email');
+    const populatedTeam = await Team.findById(team._id).populate('members', 'username email avatar');
 
     res.json({ team: populatedTeam });
   } catch (error) {
@@ -132,7 +195,7 @@ router.post('/:id/leave', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const team = await Team.findById(req.params.id)
-      .populate('members', 'username email')
+      .populate('members', 'username email avatar')
       .select('-__v');
 
     if (!team) {
@@ -146,21 +209,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Get all teams (for leaderboard)
-router.get('/', async (req, res) => {
-  try {
-    const teams = await Team.find()
-      .populate('members', 'username')
-      .select('name score members createdAt')
-      .sort({ score: -1, createdAt: 1 })
-      .limit(100);
-
-    res.json({ teams });
-  } catch (error) {
-    console.error('Get teams error:', error);
-    res.status(500).json({ error: 'Failed to get teams' });
-  }
-});
 
 export default router;
 

@@ -1,0 +1,286 @@
+.team-page {
+  width: 100%;
+}
+
+.team-header-section {
+  margin-bottom: 2rem;
+}
+
+.team-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.team-title-section {
+  flex: 1;
+}
+
+.team-name-large {
+  font-size: 2.5rem;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #4a9eff 0%, #8a2be2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.team-created {
+  color: #888;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.team-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.team-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(15, 20, 34, 0.8) 100%);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(74, 158, 255, 0.4);
+  box-shadow: 0 10px 30px rgba(74, 158, 255, 0.2);
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(74, 158, 255, 0.1);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value-large {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #4a9eff;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value-large.code-display {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  font-size: 1.5rem;
+}
+
+.stat-label-large {
+  color: #888;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+}
+
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.member-card {
+  background: linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(15, 20, 34, 0.8) 100%);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.member-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(74, 158, 255, 0.4);
+  box-shadow: 0 10px 30px rgba(74, 158, 255, 0.2);
+}
+
+.member-card.current-user {
+  border-color: rgba(74, 158, 255, 0.5);
+  background: linear-gradient(135deg, rgba(26, 31, 58, 0.95) 0%, rgba(15, 20, 34, 0.95) 100%);
+  box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+}
+
+.member-card-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.member-avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid #4a9eff;
+  object-fit: cover;
+}
+
+.member-avatar-large.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4a9eff 0%, #8a2be2 100%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.you-badge {
+  position: absolute;
+  top: -5px;
+  right: calc(50% - 60px);
+  background: linear-gradient(135deg, #4a9eff 0%, #3a8eef 100%);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 10px rgba(74, 158, 255, 0.4);
+}
+
+.member-card-body {
+  text-align: center;
+}
+
+.member-name-large {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+}
+
+.member-email-large {
+  color: #888;
+  font-size: 0.95rem;
+  margin: 0 0 1rem 0;
+}
+
+.member-meta {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.member-role {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(74, 158, 255, 0.1);
+  color: #4a9eff;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.team-info-card {
+  background: linear-gradient(135deg, rgba(26, 31, 58, 0.6) 0%, rgba(15, 20, 34, 0.6) 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid rgba(74, 158, 255, 0.2);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(74, 158, 255, 0.1);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #888;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.info-value {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.info-value.code-value-large {
+  font-family: 'Courier New', monospace;
+  color: #4a9eff;
+  letter-spacing: 2px;
+  font-size: 1.1rem;
+}
+
+.no-team-message {
+  text-align: center;
+  padding: 3rem;
+}
+
+.no-team-message h2 {
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.no-team-message p {
+  color: #888;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .team-header-content {
+    flex-direction: column;
+  }
+
+  .team-actions {
+    width: 100%;
+  }
+
+  .team-actions button {
+    flex: 1;
+  }
+
+  .members-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

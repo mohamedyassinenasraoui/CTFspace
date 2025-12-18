@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../utils/api.js';
 import { useAuth } from '../contexts/AuthContext';
+import logo from '../assets/Gemini_Generated_Image_uhu42xuhu42xuhu4-removebg-preview.png';
 import '../App.css';
 import './Landing.css';
 
@@ -114,8 +115,13 @@ function Landing() {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
+          <div className="hero-logo">
+            <img src={logo} alt="CTF Platform Logo" />
+          </div>
           <h1 className="hero-title">
-            Stay Secure in a <span className="gradient-text">Digital World</span>
+            <span className="hero-text-blue">Stay Secure in a</span>{' '}
+            <span className="hero-text-bright-blue">Digital</span>{' '}
+            <span className="hero-text-purple">World</span>
           </h1>
           <p className="hero-subtitle">
             Your trusted source for cybersecurity insights, threat intelligence, and expert analysis
@@ -151,9 +157,6 @@ function Landing() {
           <div className="section-header">
             <h2>Latest Cybersecurity Insights</h2>
           <p>Stay informed about the latest threats, vulnerabilities, and security news</p>
-          <p style={{ marginTop: '0.5rem', fontSize: '0.95rem', color: '#888' }}>
-            💡 <Link to="/hidden-flags" style={{ color: '#4a9eff' }}>Try the Hidden Flags Challenge!</Link>
-          </p>
         </div>
 
           {/* Category Filter */}

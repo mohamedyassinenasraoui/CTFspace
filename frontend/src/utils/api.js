@@ -1,29 +1,9 @@
 import axios from 'axios';
 
-// Auto-detect API URL based on current hostname
-// This allows the app to work when accessed from other devices on the network
-export const getApiUrl = () => {
-  // If VITE_API_URL is set (production), use it
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
-  
-  // Development fallback: Get current hostname and protocol
-  const hostname = window.location.hostname;
-  const protocol = window.location.protocol;
-  
-  // Development: If accessing via localhost, use localhost for API
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:5000';
-  }
-  
-  // Development: If accessing via network IP, use the same IP for API
-  return `${protocol}//${hostname}:5000`;
-};
+// Get API URL from environment variable or default to localhost
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-export const API_URL = getApiUrl();
-
-// Create axios instance with default config
+// Create axios instance with default configuration
 export const apiClient = axios.create({
   baseURL: API_URL,
   withCredentials: true,
@@ -32,20 +12,51 @@ export const apiClient = axios.create({
   },
 });
 
-// Function to set auth token for all requests
-export const setAuthToken = (token) => {
-  if (token) {
-    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } else {
-    delete apiClient.defaults.headers.common['Authorization'];
+// Add request interceptor to include auth token
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-};
+);
 
-// Initialize token from localStorage if available
-const storedToken = localStorage.getItem('accessToken');
-if (storedToken) {
-  setAuthToken(storedToken);
-}
+// Add response interceptor for token refresh
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
+    // If error is 401 and we haven't already retried
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
+      try {
+        // Try to refresh the token
+        const response = await axios.post(`${API_URL}/api/auth/refresh`, {}, {
+          withCredentials: true,
+        });
+
+        const { accessToken } = response.data;
+        localStorage.setItem('accessToken', accessToken);
+
+        // Retry the original request with new token
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        // Refresh failed, logout user
+        localStorage.removeItem('accessToken');
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 

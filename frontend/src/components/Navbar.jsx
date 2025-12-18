@@ -21,7 +21,9 @@ function Sidebar() {
   const fetchTeam = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get(`/api/teams/${user.teamId}`);
+      // Handle both string ID and populated object
+      const teamId = typeof user.teamId === 'object' ? user.teamId._id : user.teamId;
+      const response = await apiClient.get(`/api/teams/${teamId}`);
       setTeam(response.data.team);
     } catch (error) {
       console.error('Failed to fetch team:', error);
@@ -42,7 +44,7 @@ function Sidebar() {
   return (
     <>
       {/* Toggle Button */}
-      <button 
+      <button
         className={`sidebar-toggle ${isOpen ? 'open' : ''}`}
         onClick={toggleSidebar}
         aria-label="Toggle sidebar"
@@ -60,8 +62,8 @@ function Sidebar() {
 
       {/* Overlay when sidebar is open on mobile - only closes on overlay click, not sidebar links */}
       {isOpen && (
-        <div 
-          className="sidebar-overlay" 
+        <div
+          className="sidebar-overlay"
           onClick={toggleSidebar}
         ></div>
       )}
@@ -135,92 +137,21 @@ function Sidebar() {
           )}
         </nav>
 
-        {/* Team Info Section */}
-        {user && team && (
-          <Link to="/team" className="sidebar-team-link">
-            <div className="sidebar-team">
-              <div className="team-header">
-                <h4>👥 Your Team</h4>
-                <span className="view-team-arrow">→</span>
-              </div>
-            <div className="team-info">
-              <div className="team-name">{team.name}</div>
-              <div className="team-stats">
-                <div className="team-stat">
-                  <span className="stat-label">Score:</span>
-                  <span className="stat-value">{team.score || 0}</span>
-                </div>
-                <div className="team-stat">
-                  <span className="stat-label">Members:</span>
-                  <span className="stat-value">{team.members?.length || 0}/5</span>
-                </div>
-              </div>
-              
-              {/* Team Members List */}
-              {team.members && team.members.length > 0 && (
-                <div className="team-members-list">
-                  <div className="members-label">Team Members:</div>
-                  <div className="members-container">
-                    {team.members.map((member) => (
-                      <div key={member._id} className="team-member-item">
-                        {member.avatar ? (
-                          <img 
-                            src={member.avatar} 
-                            alt={member.username}
-                            className="member-avatar"
-                          />
-                        ) : (
-                          <div className="member-avatar-placeholder">
-                            {member.username?.charAt(0).toUpperCase() || '?'}
-                          </div>
-                        )}
-                        <div className="member-info">
-                          <div className="member-name">
-                            {member.username}
-                            {(member._id?.toString() === user._id?.toString() || member._id === user._id) && (
-                              <span className="member-you"> (You)</span>
-                            )}
-                          </div>
-                          {member.email && (
-                            <div className="member-email">{member.email}</div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {team.joinCode && (
-                <div className="team-code">
-                  <span className="code-label">Join Code:</span>
-                  <div className="code-value" onClick={() => {
-                    navigator.clipboard.writeText(team.joinCode);
-                    alert('Code copied to clipboard!');
-                  }}>
-                    {team.joinCode}
-                    <span className="copy-icon">📋</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          </Link>
-        )}
-
         {/* User Info Section */}
         {user && (
           <div className="sidebar-user">
             <div className="user-info">
               {user.avatar && (
-                <img 
-                  src={user.avatar} 
+                <img
+                  src={user.avatar}
                   alt={user.username}
                   className="user-avatar"
                 />
               )}
               <div className="user-details">
-                <div className="user-name">{user.username}</div>
+                <Link to={`/profile/${user._id}`} className="user-name-link">
+                  {user.username}
+                </Link>
                 {user.role === 'admin' && (
                   <div className="user-role">Admin</div>
                 )}

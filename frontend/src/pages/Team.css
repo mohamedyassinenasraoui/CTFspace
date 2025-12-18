@@ -178,11 +178,26 @@
   text-align: center;
 }
 
+.member-name-link {
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.member-name-link:hover {
+  transform: scale(1.05);
+}
+
+.member-name-link:hover .member-name-large {
+  color: #4a9eff;
+}
+
 .member-name-large {
   font-size: 1.5rem;
   font-weight: 700;
   color: #ffffff;
   margin: 0 0 0.5rem 0;
+  transition: color 0.3s ease;
 }
 
 .member-email-large {
@@ -283,4 +298,3 @@
     grid-template-columns: 1fr;
   }
 }
-

@@ -26,7 +26,9 @@ function Dashboard() {
   const fetchTeam = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get(`/api/teams/${user.teamId}`);
+      // Handle both string ID and populated object
+      const teamId = typeof user.teamId === 'object' ? user.teamId._id : user.teamId;
+      const response = await apiClient.get(`/api/teams/${teamId}`);
       setTeam(response.data.team);
     } catch (error) {
       console.error('Failed to fetch team:', error);
@@ -95,13 +97,13 @@ function Dashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
-      
+
       {success && <div className="alert alert-success">{success}</div>}
       {error && <div className="alert alert-error">{error}</div>}
 
       <div className="container">
         <h2>Welcome, {user?.username}!</h2>
-        
+
         {team ? (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -110,7 +112,7 @@ function Dashboard() {
                 Leave Team
               </button>
             </div>
-            
+
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
               <div style={{ padding: '1rem', background: 'rgba(74, 158, 255, 0.1)', borderRadius: '12px', border: '1px solid rgba(74, 158, 255, 0.2)' }}>
                 <div style={{ color: '#888', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Score</div>
@@ -126,10 +128,10 @@ function Dashboard() {
               <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(15, 20, 34, 0.6)', borderRadius: '12px', border: '1px solid rgba(74, 158, 255, 0.3)' }}>
                 <div style={{ color: '#888', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Join Code</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ 
-                    fontFamily: 'Courier New, monospace', 
-                    fontSize: '1.5rem', 
-                    fontWeight: 'bold', 
+                  <div style={{
+                    fontFamily: 'Courier New, monospace',
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
                     color: '#4a9eff',
                     letterSpacing: '2px'
                   }}>
@@ -144,17 +146,17 @@ function Dashboard() {
                 </div>
               </div>
             )}
-            
+
             {team.members && team.members.length > 0 && (
               <div style={{ marginTop: '1.5rem' }}>
                 <h4 style={{ marginBottom: '1rem' }}>Team Members</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                   {team.members.map((member) => (
-                    <div 
-                      key={member._id} 
-                      style={{ 
-                        padding: '1rem', 
-                        background: 'rgba(26, 31, 58, 0.6)', 
+                    <div
+                      key={member._id}
+                      style={{
+                        padding: '1rem',
+                        background: 'rgba(26, 31, 58, 0.6)',
                         borderRadius: '12px',
                         border: '1px solid rgba(74, 158, 255, 0.2)',
                         display: 'flex',
@@ -163,8 +165,8 @@ function Dashboard() {
                       }}
                     >
                       {member.avatar && (
-                        <img 
-                          src={member.avatar} 
+                        <img
+                          src={member.avatar}
                           alt={member.username}
                           style={{
                             width: '40px',
@@ -188,7 +190,7 @@ function Dashboard() {
           <div>
             <h3>Create or Join a Team</h3>
             <p>You need to be in a team to submit flags and compete.</p>
-            
+
             {/* Tab Buttons */}
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
               <button
@@ -237,7 +239,7 @@ function Dashboard() {
                     onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                     placeholder="Enter 6-character join code"
                     maxLength={6}
-                    style={{ 
+                    style={{
                       textTransform: 'uppercase',
                       fontFamily: 'Courier New, monospace',
                       letterSpacing: '2px',

@@ -77,8 +77,11 @@ function Landing() {
 
   useEffect(() => {
     fetchBlogs();
-    fetchReviews();
   }, [selectedCategory]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, []); // Only fetch reviews once on mount
 
   const fetchBlogs = async () => {
     try {
@@ -156,8 +159,8 @@ function Landing() {
         <div className="container">
           <div className="section-header">
             <h2>Latest Cybersecurity Insights</h2>
-          <p>Stay informed about the latest threats, vulnerabilities, and security news</p>
-        </div>
+            <p>Stay informed about the latest threats, vulnerabilities, and security news</p>
+          </div>
 
           {/* Category Filter */}
           <div className="category-filter">

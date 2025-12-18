@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../utils/api.js';
 import { useAuth } from '../contexts/AuthContext';
 import '../App.css';
@@ -24,7 +24,9 @@ function Team() {
   const fetchTeam = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get(`/api/teams/${user.teamId}`);
+      // Handle both string ID and populated object
+      const teamId = typeof user.teamId === 'object' ? user.teamId._id : user.teamId;
+      const response = await apiClient.get(`/api/teams/${teamId}`);
       setTeam(response.data.team);
     } catch (error) {
       console.error('Failed to fetch team:', error);
@@ -82,7 +84,7 @@ function Team() {
   return (
     <div className="team-page">
       <h1>My Team</h1>
-      
+
       {success && <div className="alert alert-success">{success}</div>}
       {error && <div className="alert alert-error">{error}</div>}
 
@@ -146,8 +148,8 @@ function Team() {
                 <div key={member._id} className={`member-card ${isCurrentUser ? 'current-user' : ''}`}>
                   <div className="member-card-header">
                     {member.avatar ? (
-                      <img 
-                        src={member.avatar} 
+                      <img
+                        src={member.avatar}
                         alt={member.username}
                         className="member-avatar-large"
                       />
@@ -161,7 +163,12 @@ function Team() {
                     )}
                   </div>
                   <div className="member-card-body">
-                    <h4 className="member-name-large">{member.username}</h4>
+                    <Link
+                      to={`/profile/${member._id}`}
+                      className="member-name-link"
+                    >
+                      <h4 className="member-name-large">{member.username}</h4>
+                    </Link>
                     {member.email && (
                       <p className="member-email-large">{member.email}</p>
                     )}

@@ -21,7 +21,7 @@ export const authRateLimit = rateLimit({
 // Rate limiter for general API
 export const apiRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requests per 15 minutes
+  max: 500, // max 500 requests per 15 minutes (increased for development)
   standardHeaders: true,
   legacyHeaders: false,
 });

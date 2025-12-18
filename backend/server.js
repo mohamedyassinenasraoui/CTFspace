@@ -16,6 +16,7 @@ import blogRoutes from './routes/blogs.js';
 import commentRoutes from './routes/comments.js';
 import reviewRoutes from './routes/reviews.js';
 import newsRoutes from './routes/news.js';
+import userRoutes from './routes/users.js';
 import { initializeSocketIO } from './socket/socket.js';
 import { setupNewsScheduler } from './services/newsScheduler.js';
 
@@ -87,6 +88,7 @@ app.use('/api/blogs', blogRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/news', newsRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

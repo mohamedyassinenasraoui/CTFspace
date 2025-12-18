@@ -64,6 +64,7 @@
     opacity: 0;
     transform: scale(0.8);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -496,6 +497,20 @@
   font-size: 1rem;
 }
 
+.user-name-link {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.user-name-link:hover {
+  color: #4a9eff;
+  transform: translateX(3px);
+}
+
 .user-role {
   color: #4a9eff;
   font-size: 0.85rem;
@@ -528,7 +543,7 @@
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.sidebar.closed ~ .main-content.sidebar-main {
+.sidebar.closed~.main-content.sidebar-main {
   margin-left: 0;
 }
 
@@ -536,8 +551,8 @@
   .sidebar-main {
     margin-left: 0;
   }
-  
-  .sidebar.closed ~ .main-content.sidebar-main {
+
+  .sidebar.closed~.main-content.sidebar-main {
     margin-left: 0;
   }
 }

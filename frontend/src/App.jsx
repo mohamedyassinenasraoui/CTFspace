@@ -14,6 +14,7 @@ import Leaderboard from './pages/Leaderboard';
 import AdminPanel from './pages/AdminPanel';
 import Tutorials from './pages/Tutorials';
 import Team from './pages/Team';
+import Profile from './pages/Profile';
 import Sidebar from './components/Navbar';
 import { WebSocketFlag } from './components/WebSocketFlag';
 import './App.css';
@@ -22,21 +23,21 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
-  
+
   return user ? children : <Navigate to="/login" />;
 }
 
 function AdminRoute({ children }) {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
-  
+
   return user?.role === 'admin' ? children : <Navigate to="/dashboard" />;
 }
 
@@ -87,6 +88,14 @@ function AppRoutes() {
         element={
           <PrivateRoute>
             <Team />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/profile/:userId"
+        element={
+          <PrivateRoute>
+            <Profile />
           </PrivateRoute>
         }
       />

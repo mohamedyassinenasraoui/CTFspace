@@ -54,10 +54,14 @@ const corsOptions = {
       origin.startsWith('http://172.28.') ||
       origin.startsWith('http://172.29.') ||
       origin.startsWith('http://172.30.') ||
-      origin.startsWith('http://172.31.')) {
+      origin.startsWith('http://172.30.') ||
+      origin.startsWith('http://172.31.') ||
+      origin.startsWith('http://127.') ||
+      origin.startsWith('http://localhost')) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.log('CORS Blocked Origin:', origin); // Log the blocked origin
+      callback(null, false); // Fail gracefully (403) instead of crashing (500)
     }
   },
   credentials: true

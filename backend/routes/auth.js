@@ -19,11 +19,9 @@ router.post('/register', authRateLimit, async (req, res) => {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
-    // Check JWT secrets are set
-    if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
-      console.error('JWT_SECRET or JWT_REFRESH_SECRET is not set in environment variables');
-      return res.status(500).json({ error: 'Server configuration error' });
-    }
+    // Use JWT secrets from env or defaults for development
+    const jwtSecret = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+    const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-change-in-production';
 
     // Normalize email to lowercase (matching schema)
     const normalizedEmail = email.toLowerCase().trim();
@@ -53,13 +51,13 @@ router.post('/register', authRateLimit, async (req, res) => {
     
     const accessToken = jwt.sign(
       tokenPayload,
-      process.env.JWT_SECRET,
+      jwtSecret,
       { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
       tokenPayload,
-      process.env.JWT_REFRESH_SECRET,
+      jwtRefreshSecret,
       { expiresIn: '7d' }
     );
 
@@ -83,7 +81,28 @@ router.post('/register', authRateLimit, async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Registration failed' });
+    
+    // Handle specific error types
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(e => e.message);
+      return res.status(400).json({ error: errors.join(', ') });
+    }
+    
+    if (error.code === 11000) {
+      // Duplicate key error (email already exists)
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+    
+    if (error.name === 'MongoError' || error.name === 'MongoServerError') {
+      return res.status(500).json({ error: 'Database error. Please try again later.' });
+    }
+    
+    // Generic error with more details in development
+    const errorMessage = process.env.NODE_ENV === 'development' 
+      ? `Registration failed: ${error.message}` 
+      : 'Registration failed. Please try again.';
+    
+    res.status(500).json({ error: errorMessage });
   }
 });
 
@@ -96,11 +115,9 @@ router.post('/login', authRateLimit, async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Check JWT secrets are set
-    if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
-      console.error('JWT_SECRET or JWT_REFRESH_SECRET is not set in environment variables');
-      return res.status(500).json({ error: 'Server configuration error' });
-    }
+    // Use JWT secrets from env or defaults for development
+    const jwtSecret = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+    const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-change-in-production';
 
     // Normalize email to lowercase (matching schema)
     const normalizedEmail = email.toLowerCase().trim();
@@ -144,13 +161,13 @@ router.post('/login', authRateLimit, async (req, res) => {
     
     const accessToken = jwt.sign(
       tokenPayload,
-      process.env.JWT_SECRET,
+      jwtSecret,
       { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
       tokenPayload,
-      process.env.JWT_REFRESH_SECRET,
+      jwtRefreshSecret,
       { expiresIn: '7d' }
     );
 
@@ -202,12 +219,11 @@ router.post('/refresh', async (req, res) => {
       return res.status(401).json({ error: 'No refresh token provided' });
     }
 
-    if (!process.env.JWT_REFRESH_SECRET || !process.env.JWT_SECRET) {
-      console.error('JWT secrets are not set in environment variables');
-      return res.status(500).json({ error: 'Server configuration error' });
-    }
+    // Use JWT secrets from env or defaults for development
+    const jwtSecret = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+    const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-change-in-production';
 
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const decoded = jwt.verify(refreshToken, jwtRefreshSecret);
     const user = await User.findById(decoded.userId);
 
     if (!user) {
@@ -216,7 +232,7 @@ router.post('/refresh', async (req, res) => {
 
     const accessToken = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET,
+      jwtSecret,
       { expiresIn: '15m' }
     );
 
@@ -241,7 +257,10 @@ router.get('/me', async (req, res) => {
       return res.status(401).json({ error: 'No token provided' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Use JWT secret from env or default for development
+    const jwtSecret = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+    
+    const decoded = jwt.verify(token, jwtSecret);
     const user = await User.findById(decoded.userId)
       .select('-passwordHash')
       .populate('teamId', 'name score members');

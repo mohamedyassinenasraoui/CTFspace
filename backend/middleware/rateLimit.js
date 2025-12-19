@@ -12,10 +12,17 @@ export const submissionRateLimit = rateLimit({
 // Rate limiter for authentication
 export const authRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // max 5 attempts per 15 minutes
+  max: process.env.NODE_ENV === 'production' ? 5 : 100, // max 5 attempts in production, 100 in development
   message: { error: 'Too many authentication attempts, please try again later' },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    // In development, be more lenient
+    if (process.env.NODE_ENV !== 'production') {
+      return false; // Still apply rate limiting but with higher limit
+    }
+    return false;
+  }
 });
 
 // Rate limiter for general API

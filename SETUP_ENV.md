@@ -72,3 +72,4 @@ VITE_API_URL=http://localhost:5000
 - Make sure MongoDB is installed and running on your system
 - For production, change the JWT secrets to strong random strings
 
+

@@ -15,6 +15,7 @@ import AdminPanel from './pages/AdminPanel';
 import Tutorials from './pages/Tutorials';
 import Team from './pages/Team';
 import Profile from './pages/Profile';
+import Contact from './pages/Contact';
 import Sidebar from './components/Navbar';
 import { WebSocketFlag } from './components/WebSocketFlag';
 import './App.css';
@@ -51,6 +52,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/tutorials" element={<Tutorials />} />
+      <Route path="/contact" element={<Contact />} />
       <Route
         path="/dashboard"
         element={

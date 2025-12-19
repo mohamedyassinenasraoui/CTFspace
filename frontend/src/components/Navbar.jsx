@@ -107,6 +107,9 @@ function Sidebar() {
               <Link to="/tutorials" className="sidebar-link">
                 <span>📚</span> Tutorials
               </Link>
+              <Link to="/contact" className="sidebar-link">
+                <span>📧</span> Contact
+              </Link>
               {user.role === 'admin' && (
                 <Link to="/admin" className="sidebar-link">
                   <span>⚙️</span> Admin
@@ -132,6 +135,9 @@ function Sidebar() {
               </Link>
               <Link to="/tutorials" className="sidebar-link">
                 <span>📚</span> Tutorials
+              </Link>
+              <Link to="/contact" className="sidebar-link">
+                <span>📧</span> Contact
               </Link>
             </>
           )}
